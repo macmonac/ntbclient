@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. /usr/share/debconf/confmodule
+
+chmod 0700 /var/lib/ntbclient/
+
+if [ -f "/etc/ntbclient/ntbclient.conf" ]
+then
+    . "/etc/ntbclient/ntbclient.conf"
+    [ -f "${private_key}" ] && chmod 0600 "${private_key}"
+fi
+
+exit 0

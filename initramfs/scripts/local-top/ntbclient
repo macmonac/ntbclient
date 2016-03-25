@@ -1,0 +1,71 @@
+#!/bin/sh
+
+PREREQ="udev mdadm lvm2"
+
+prereqs() {
+    echo "$PREREQ"
+}
+
+case "$1" in
+    prereqs)
+        prereqs
+        exit 0
+    ;;
+esac
+
+. /scripts/functions
+
+[ -x /lib/ntbclient/ntbclient ] || exit 0
+
+. /conf/initramfs.conf
+
+mkdir -p /var/run
+
+# We need to wait until udev finishes, because init-top/udev does not
+# block until everything is initialized.
+wait_for_udev
+
+# Configure the network in the background.
+#
+# This step can print messages like:
+# /scripts/init-premount/dropbear: line XXX: ipconfig: not found
+# The reason for these messages is that the root volume is not encrypted and
+# the root switch happens before the network has been configured. After the
+# root switch the ipconfig binary is no longer present and thus the messages.
+#
+# If you encounter this specific issue then you should disable dropbear in the
+# initramfs as it isn't needed to unlock the passphrase prompt. For this do:
+# 1) Edit /usr/share/initramfs-tools/conf-hooks.d/dropbear and set DROPBEAR=n
+# 2) Run: sudo update-initramfs -k all -u
+# configure_networking
+
+# Start dropbear once the network subsystem of udev is ready and the network is
+# configured.
+log_begin_msg "Starting ntbclient..."
+
+[ -f "/etc/default/ntbclient" ] && . /etc/default/ntbclient
+case `echo "${USE_TPM}" | cut -c 1` in
+    T|t|Y|y)
+        TPM=true;;
+    *)
+        TPM=false;;
+esac
+
+mkdir -p /boot
+mount /boot
+
+[ ! -f /lib/cryptsetup/passfifo ] && mkfifo -m 0600 /lib/cryptsetup/passfifo 2>/dev/null
+
+if ${TPM}
+then
+    ifconfig lo 127.0.0.1
+    cat /var/lib/tpm/passwd >> /etc/passwd
+    cat /var/lib/tpm/group >> /etc/group
+    tcsd
+    ( configure_networking ; tpm_unsealdata -z -i "${KEY_PATH}" | /lib/ntbclient/ntbclient --private-key '-' --decode64 --output "/lib/cryptsetup/passfifo" ) &
+else
+    ( configure_networking ; /lib/ntbclient/ntbclient --private-key "${KEY_PATH}" --decode64 --output "/lib/cryptsetup/passfifo" ) &
+fi
+echo $! > /var/run/ntbclient.pid
+
+log_end_msg

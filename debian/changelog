@@ -1,0 +1,5 @@
+ntbclient (2.0.0) unstable; urgency=low
+
+  * First rewrite in python
+
+ -- Pierre BLONDEAU <pierre.blondeau@unicaen.fr>  Fri, 21 Aug 2015 16:57:44 +0200

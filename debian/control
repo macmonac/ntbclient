@@ -1,0 +1,17 @@
+Source: ntbclient
+Section: admin
+Priority: optional
+Maintainer: Pierre Blondeau <pierre.blondeau@unicaen.fr>, Davy Gigan <davy.gigan@unicaen.fr>, Gottstein Cyprien <cyprien.gottstein@unicaen.fr>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 2.1.0
+Homepage: https://forge.greyc.fr/projects/network-trusted-boot
+Vcs-Browser: https://forge.greyc.fr/projects/ntbclient/repository
+Vcs-Git: https://forge.greyc.fr/git/ntbclient
+
+Package: ntbclient
+Section: python
+Architecture: all
+Depends: python (>=2.7), python-crypto, python-argcomplete, python-configobj, python-urllib3, cx-freeze
+Conflicts: ntb-client
+Suggests: dropbear
+Description: Network Trusted Boot Client

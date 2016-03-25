@@ -1,0 +1,26 @@
+# ntbclient
+
+# This file configures ntbclient running during boot sequence (stored inside the initramfs).
+
+#############
+# IMPORTANT #
+#############
+
+# You must understand that without the use of a tpm, NTB system is NOT safe against Evil Maid Attack.
+# Even if NTB system protects you against hardware theft, you are still vunerable to any attacker that
+# has physical access to harddrive. Step 1: corrupt the boot process. Step 2: get the encryption key with
+# the help of corrupted boot process. Step 3: steal the hardware.
+
+# Since TPM is not a commonly used technology and only recent computer are equipped with TPM chip, by default its use is disabled.
+# Some other step are needed in order to make this work. c.f. documentation.
+
+# Set the use of the TPM
+USE_TPM=false
+
+# Set the RSA private-key ntbclient will use in the initramfs.
+# Beware to put your Key on the /boot partition since it will the only place where files aren't encrypted.
+# If you choose to make use of your TPM chip and set USE_TPM to true, KEY_PATH must point to a tpm sealed file which stores the RSA private key.
+# Else make it point to a normal RSA private-key.
+
+KEY_PATH="/boot/key.pem"
+#KEY_PATH="/boot/key.seal"

@@ -1,0 +1,114 @@
+#!/bin/sh
+PREREQ=""
+prereqs()
+{
+     echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+     prereqs
+     exit 0
+     ;;
+esac
+
+[ -f "/etc/default/ntbclient" ] && . /etc/default/ntbclient
+case `echo "${USE_TPM}" | cut -c 1` in
+    T|t|Y|y)
+        TPM=true;;
+    *)
+        TPM=false;;
+esac
+
+[ -f "/etc/ntbclient/ntbclient.conf" ] && . /etc/ntbclient/ntbclient.conf
+
+# ntbclient
+if [ "${NTB}" != "n" ]; then
+
+    if [ $(sed '/^$/d;/^#/d' "/etc/crypttab" | wc -l) = "0" ]; then
+        echo "ntbclient: NOTICE: Skipping ntbclient installation because /etc/crypttab has no entries." >&2
+        exit 0
+    fi
+
+    if [ ! -x "/usr/bin/ntbclient" ]; then
+        echo "ntbclient: FAILURE: /usr/bin/ntbclient not found!" >&2
+        exit 0
+    fi
+
+    if $TPM && [ ! -x "/usr/sbin/tcsd" ]; then
+        echo "ntbclient: FAILURE: /usr/sbin/tcsd not found!" >&2
+        exit 0
+    fi
+
+    if [ ! -f "${KEY_PATH}" ]; then
+        echo "ntbclient: WARNING: \"${KEY_PATH}\" does not exist" >&2
+    fi
+
+    . /usr/share/initramfs-tools/hook-functions
+
+    # Freeze ntbclient
+    CXDESTDIR="$(mktemp -d ${TMPDIR:-/tmp}/cxfreeze_ntbclient__XXXXXX)" || exit 1
+    chmod 755 "${CXDESTDIR}"
+    RES="`cxfreeze --install-dir "${CXDESTDIR}" /usr/bin/ntbclient`"
+    [ $? -ne 0 ] && echo "${RES}"
+
+    mkdir -p ${DESTDIR}/lib/ntbclient
+    ( cd "${CXDESTDIR}" ; find . -type f | while read i
+    do
+        copy_exec "${i}" "/lib/ntbclient/${i}"
+    done)
+    rm -rf "${CXDESTDIR}"
+
+    # Conf for ntbclient
+    rm -f ${DESTDIR}/etc/default/ntbclient
+    mkdir -p ${DESTDIR}/etc/default
+    cp /etc/default/ntbclient ${DESTDIR}/etc/default/ntbclient
+
+    rm -f ${DESTDIR}/etc/ntbclient
+    mkdir -p ${DESTDIR}/etc/ntbclient
+    cp /etc/ntbclient/ntbclient.conf ${DESTDIR}/etc/ntbclient/ntbclient.conf
+
+    rm -f ${DESTDIR}/usr/share/ntbclient
+    mkdir -p ${DESTDIR}/usr/share/ntbclient
+    cp /usr/share/ntbclient/ntbclient.conf.spec ${DESTDIR}/usr/share/ntbclient/ntbclient.conf.spec
+
+    rm -f ${DESTDIR}/etc/ssl/certs/ca-certificates.crt
+    mkdir -p ${DESTDIR}/etc/ssl/certs/
+    cp /etc/ssl/certs/ca-certificates.crt ${DESTDIR}/etc/ssl/certs/ca-certificates.crt
+
+    # Var for ntbclient
+    for cache_file in "${cache_id_file}" "${ca_certificate_file}"
+    do
+        if [ -n "${cache_file}" ] && [ -f "${cache_file}" ]
+        then
+            rm -f "${DESTDIR}${cache_file}"
+            mkdir -p "`dirname "${DESTDIR}${cache_file}"`"
+            cp "${cache_file}" "${DESTDIR}${cache_file}"
+        fi
+    done
+
+    # TPM tools
+    if $TPM
+    then
+        rm -f ${DESTDIR}/bin/tcsd
+        rm -f ${DESTDIR}/bin/tpm_unsealdata
+
+        copy_exec /usr/bin/tpm_unsealdata /bin/tpm_unsealdata
+        copy_exec /usr/sbin/tcsd /bin/tcsd
+
+        mkdir -p ${DESTDIR}/var/lib/tpm
+        cp /var/lib/tpm/system.data ${DESTDIR}/var/lib/tpm/system.data
+
+        getent passwd tss >> ${DESTDIR}/var/lib/tpm/passwd
+        getent group tss >> ${DESTDIR}/var/lib/tpm/group
+    fi
+
+    # DNS
+    rm -f ${DESTDIR}/etc/hosts
+    cp /etc/hosts ${DESTDIR}/etc/hosts
+
+    # FSTAB
+    rm -f ${DESTDIR}/etc/fstab
+    cp /etc/fstab ${DESTDIR}/etc/fstab
+
+fi

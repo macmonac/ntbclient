@@ -1,0 +1,37 @@
+#!/bin/sh
+
+PREREQ=""
+
+prereqs() {
+    echo "$PREREQ"
+}
+
+case "$1" in
+    prereqs)
+        prereqs
+        exit 0
+    ;;
+esac
+
+. /scripts/functions
+
+[ -r /var/run/ntbclient.pid ] || exit 0
+
+log_begin_msg "Stopping ntbclient"
+
+[ -f "/etc/default/ntbclient" ] && . /etc/default/ntbclient
+case `echo "${USE_TPM}" | cut -c 1` in
+    T|t|Y|y)
+        TPM=true;;
+    *)
+        TPM=false;;
+esac
+
+if ${TPM}
+then
+    killall tcsd &>/dev/null
+fi
+kill `cat /var/run/ntbclient.pid`
+umount /boot
+
+log_end_msg
