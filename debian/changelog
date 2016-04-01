@@ -1,4 +1,4 @@
-ntbclient (2.0.0) unstable; urgency=low
+ntbclient (2.1.0) unstable; urgency=low
 
   * First rewrite in python
 
