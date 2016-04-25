@@ -83,7 +83,7 @@
 # knowledge of the CeCILL-B license and that you accept its terms.
 
 # vim:set ai et sta ts=4 sts=4 sw=4 tw=160:
-# Last modified: mercredi 2015-08-26 10:55:56 +0200
+# Last modified: lundi 2016-04-25 11:30:43 +0200
 
 from __future__ import print_function
 import os
@@ -151,7 +151,10 @@ def get_passphrase(pool, id, private_key, servers, ntry, interval):
             headers = {'User-Agent': 'ntbclient'}
             try:
                 response = pool.request_encode_body('POST', 'https://%s:%s/passphrase' % (server['host'], server['port']), headers=headers, fields=params)
-                return decrypt(response.data, private_key)
+                if response.status == 200:
+                    return decrypt(response.data, private_key)
+                else:
+                    raise Exception('HTTP response status code error (%s)' % (response.status))
             except Exception as e:
                 warning("%s(%s) : %s" % (server['host'], server['ip'], str(e)), traceback.format_exc())
         number_try = number_try - 1
@@ -170,6 +173,10 @@ def subscribe(pool, id, private_key, public_key, servers):
         headers = {'User-Agent': 'ntbclient'}
         try:
             response = pool.request_encode_body('POST', 'https://%s:%s/subscribe' % (server['host'], server['port']), headers=headers, fields=params)
+            if response.status == 200:
+                return decrypt(response.data, private_key)
+            else:
+                raise Exception('HTTP response status code error (%s)' % (response.status))
             return response.data
         except Exception as e:
             warning("%s(%s) : %s" % (server['host'], server['ip'], str(e)), traceback.format_exc())
