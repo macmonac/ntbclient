@@ -1,3 +1,9 @@
+ntbclient (2.2.0) trusty; urgency=medium
+
+  * [b5e13a4d] Verifying the http response status code is 200 before doing anything else.
+
+ -- Pierre BLONDEAU <blondeau@jarod.info.unicaen.fr>  Mon, 25 Apr 2016 13:31:38 +0200
+
 ntbclient (2.1.0) unstable; urgency=low
 
   * First rewrite in python
