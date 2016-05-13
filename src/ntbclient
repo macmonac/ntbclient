@@ -129,12 +129,12 @@ create_connection_old = socket.create_connection
 
 
 # Overload socket.create_connection to overwrite dns resolution
-def new_create_connection(address, **kwargs):
+def new_create_connection(address, *args, **kwargs):
     global dnsip
     h, p = address
     if dnsip:
         h = dnsip
-    return create_connection_old((h, p), **kwargs)
+    return create_connection_old((h, p), *args, **kwargs)
 
 socket.create_connection = new_create_connection
 
