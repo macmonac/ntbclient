@@ -250,11 +250,18 @@ def id_from_files(id_file, cache_id_file):
 
 def cache_id(id, cache_id_file):
     if not os.path.exists(cache_id_file):
-        try:
-            with open(cache_id_file, "w") as file:
-                file.write(id)
-        except IOError as e:
-            warning(str(e), traceback.format_exc())
+        cache_id_file_dir = os.path.dirname(cache_id_file)
+        if os.path.isdir(cache_id_file_dir):
+            if os.access(cache_id_file_dir, os.W_OK):
+                try:
+                    with open(cache_id_file, "w") as file:
+                        file.write(id)
+                except IOError as e:
+                    warning(str(e), traceback.format_exc())
+            else:
+                warning("Can't write in Cache_id_file directory")
+        else:
+            warning("Cache_id_file directory doesn't exist")
     else:
         warning("Cache_id_file already exist")
 
@@ -328,8 +335,11 @@ def ipv6_allowed(familly):
 
 def main():
     global verbose
+    default_conf_file = '/etc/ntbclient/ntbclient.conf'
+    if not os.path.isfile(default_conf_file) or not os.access(default_conf_file, os.R_OK):
+        default_conf_file = None
     conf_parser = ArgumentParser(description="NTBServer CLI", add_help=False)
-    conf_parser.add_argument("-c", "--conf-file", help="Specify config file", type=FileType('r'), default='/etc/ntbclient/ntbclient.conf')
+    conf_parser.add_argument("-c", "--conf-file", help="Specify config file", type=FileType('r'), default=default_conf_file)
 
     defaults = {}
     args, remaining_argv = conf_parser.parse_known_args()
