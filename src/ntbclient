@@ -174,10 +174,9 @@ def subscribe(pool, id, private_key, public_key, servers):
         try:
             response = pool.request_encode_body('POST', 'https://%s:%s/subscribe' % (server['host'], server['port']), headers=headers, fields=params)
             if response.status == 200:
-                return decrypt(response.data, private_key)
+                return response.data
             else:
                 raise Exception('HTTP response status code error (%s)' % (response.status))
-            return response.data
         except Exception as e:
             warning("%s(%s) : %s" % (server['host'], server['ip'], str(e)), traceback.format_exc())
     error("Can't subscribe !")
