@@ -30,9 +30,14 @@ if [ "${NTB}" != "n" ]; then
         exit 0
     fi
 
-    if [ ! -x "/usr/bin/ntbclient" ]; then
-        echo "ntbclient: FAILURE: /usr/bin/ntbclient not found!" >&2
-        exit 0
+    ntbclient_static="/usr/bin/ntbclient.static"
+    if [ -x "/var/lib/ntbclient/ntbclient.static" ]; then
+        echo "ntbclient: NOTICE: use /var/lib/ntbclient/ntbclient.static instead of ${ntbclient_static}" >&2
+        ntbclient_static="/var/lib/ntbclient/ntbclient.static"
+    fi
+
+    if [ ! -x "${ntbclient_static}" ]; then
+        echo "ntbclient: FAILURE: ${ntbclient_static} not found or not executable!" >&2
     fi
 
     if $TPM && [ ! -x "/usr/sbin/tcsd" ]; then
@@ -46,18 +51,9 @@ if [ "${NTB}" != "n" ]; then
 
     . /usr/share/initramfs-tools/hook-functions
 
-    # Freeze ntbclient
-    CXDESTDIR="$(mktemp -d ${TMPDIR:-/tmp}/cxfreeze_ntbclient__XXXXXX)" || exit 1
-    chmod 755 "${CXDESTDIR}"
-    RES="`cxfreeze --install-dir "${CXDESTDIR}" /usr/bin/ntbclient`"
-    [ $? -ne 0 ] && echo "${RES}"
-
-    mkdir -p ${DESTDIR}/lib/ntbclient
-    ( cd "${CXDESTDIR}" ; find . -type f | while read i
-    do
-        copy_exec "${i}" "/lib/ntbclient/${i}"
-    done)
-    rm -rf "${CXDESTDIR}"
+    # Copy static ntbclient
+    mkdir -p "${DESTDIR}/lib/ntbclient/"
+    copy_exec "${ntbclient_static}" "/lib/ntbclient/ntbclient"
 
     # Conf for ntbclient
     rm -f ${DESTDIR}/etc/default/ntbclient

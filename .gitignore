@@ -1,4 +1,5 @@
 debian/ntbclient/*
+debian/build/*
 debian/*debhelper*
 debian/files
 *.pyc
