@@ -1,3 +1,9 @@
+ntbclient (2.3.0) trusty; urgency=medium
+
+  * [b03392ce] Remove cryptroot path ( DIY ) and generate static file with pyinstaller during build package
+
+ -- Pierre BLONDEAU <blondeau@jarod.info.unicaen.fr>  Mon, 27 Jun 2016 17:59:36 +0200
+
 ntbclient (2.2.1) trusty; urgency=medium
 
   * [d0ff0eec] Add compatibility with old urllib3/connectionpool.py ( nearly python version < 2.7.6 )
