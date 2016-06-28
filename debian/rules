@@ -29,7 +29,9 @@ endif
 override_dh_auto_install:
 	install -d -m 755 $(DESTDIR)/usr/bin
 	install -m 755 $(CURDIR)/src/ntbclient $(DESTDIR)/usr/bin
+ifdef PYINSTALLER
 	install -m 755 $(BUILDDIR)/ntbclient.static $(DESTDIR)/usr/bin
+endif
 	install -d -m 755 $(DESTDIR)/usr/share/ntbclient
 	install -m 644 $(CURDIR)/conf/ntbclient.conf.spec $(DESTDIR)/usr/share/ntbclient/
 	install -d -m 755 $(DESTDIR)/etc/ntbclient

@@ -11,7 +11,7 @@ Vcs-Git: https://forge.greyc.fr/git/ntbclient
 Package: ntbclient
 Section: python
 Architecture: all
-Depends: python (>=2.7), python-crypto, python-argcomplete, python-configobj, python-urllib3, cx-freeze
+Depends: python (>=2.7), python-crypto, python-argcomplete, python-configobj, python-urllib3
 Conflicts: ntb-client
 Suggests: dropbear
 Description: Network Trusted Boot Client
