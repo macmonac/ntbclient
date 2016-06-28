@@ -1,3 +1,9 @@
+ntbclient (2.3.1) trusty; urgency=medium
+
+  * [ea43c7ec] Small correction following the transition to pyinstaller
+
+ -- Pierre BLONDEAU <blondeau@jarod.info.unicaen.fr>  Tue, 28 Jun 2016 23:45:28 +0200
+
 ntbclient (2.3.0) trusty; urgency=medium
 
   * [b03392ce] Remove cryptroot path ( DIY ) and generate static file with pyinstaller during build package
