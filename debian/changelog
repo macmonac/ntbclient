@@ -1,3 +1,9 @@
+ntbclient (2.3.2) trusty; urgency=medium
+
+  * [15e38d7a] Add dynamic libraries for python in the initramfs
+
+ -- Pierre BLONDEAU <blondeau@jarod.info.unicaen.fr>  Mon, 11 Jul 2016 16:12:45 +0200
+
 ntbclient (2.3.1) trusty; urgency=medium
 
   * [ea43c7ec] Small correction following the transition to pyinstaller
