@@ -36,8 +36,6 @@ endif
 	install -m 644 $(CURDIR)/conf/ntbclient.conf.spec $(DESTDIR)/usr/share/ntbclient/
 	install -d -m 755 $(DESTDIR)/etc/ntbclient
 	install -m 644 $(CURDIR)/conf/ntbclient.conf $(DESTDIR)/etc/ntbclient/
-	install -d -m 755 $(DESTDIR)/usr/share/initramfs-tools/conf-hooks.d
-	install -m 644 $(CURDIR)/initramfs/conf-hooks.d/ntbclient $(DESTDIR)/usr/share/initramfs-tools/conf-hooks.d/
 	install -d -m 755 $(DESTDIR)/usr/share/initramfs-tools/hooks
 	install -m 755 $(CURDIR)/initramfs/hooks/ntbclient $(DESTDIR)/usr/share/initramfs-tools/hooks/
 	install -d -m 755 $(DESTDIR)/usr/share/initramfs-tools/scripts/local-bottom

@@ -1,5 +1,0 @@
-# force busybox on initramfs
-BUSYBOX=y
-
-# force complete busybox
-BUSYBOXDIR=/bin
