@@ -13,11 +13,21 @@ case "$1" in
     ;;
 esac
 
-. /scripts/functions
-
 [ -x /lib/ntbclient/ntbclient ] || exit 0
 
+. /scripts/functions
 . /conf/initramfs.conf
+
+wait_for_network(){
+    for ROUNDTTT in 1 2 3 4 6 9 16 25 36 64 100
+    do
+        if egrep -q "IPV(4|6)ADDR=" /run/net-*.conf
+        then
+            break
+        fi
+        sleep $ROUNDTTT
+    done
+}
 
 mkdir -p /var/run
 
@@ -62,9 +72,9 @@ then
     cat /var/lib/tpm/passwd >> /etc/passwd
     cat /var/lib/tpm/group >> /etc/group
     tcsd
-    ( configure_networking ; tpm_unsealdata -z -i "${KEY_PATH}" | /lib/ntbclient/ntbclient --private-key '-' --decode64 --output "/lib/cryptsetup/passfifo" ) &
+    ( configure_networking ; wait_for_network ; tpm_unsealdata -z -i "${KEY_PATH}" | /lib/ntbclient/ntbclient --private-key '-' --decode64 --output "/lib/cryptsetup/passfifo" ) &
 else
-    ( configure_networking ; /lib/ntbclient/ntbclient --private-key "${KEY_PATH}" --decode64 --output "/lib/cryptsetup/passfifo" ) &
+    ( configure_networking ; wait_for_network ; /lib/ntbclient/ntbclient --private-key "${KEY_PATH}" --decode64 --output "/lib/cryptsetup/passfifo" ) &
 fi
 echo $! > /var/run/ntbclient.pid
 
