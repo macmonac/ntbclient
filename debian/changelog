@@ -1,3 +1,11 @@
+ntbclient (2.4.0) xenial; urgency=medium
+
+  * [aacbb217] Add README
+  * [ee4d0487] Disable complete busybox
+  * [7f6a0f8e] Wait network configuration before run ntb
+
+ -- Pierre BLONDEAU <blondeau@jarod.info.unicaen.fr>  Fri, 14 Oct 2016 19:45:57 +0200
+
 ntbclient (2.3.2) trusty; urgency=medium
 
   * [15e38d7a] Add dynamic libraries for python in the initramfs
