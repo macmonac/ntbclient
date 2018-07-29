@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 from __future__ import print_function
 import sys
 import os
@@ -15,7 +14,7 @@ def test_spec(conf, spec):
     validator = Validator()
     results = config.validate(validator)
 
-    if not results is True:
+    if results is not True:
         for (section_list, key, _) in flatten_errors(config, results):
             if key is not None:
                 res.append('The "%s" key in the section "%s" failed validation' % (key, ', '.join(section_list)))
@@ -23,8 +22,9 @@ def test_spec(conf, spec):
                 res.append('The following section was missing:%s ' % ', '.join(section_list))
     return res
 
+
 filestotest = [{"conf": "../conf/ntbclient.conf", "spec": "../conf/ntbclient.conf.spec"},
-              ]
+               ]
 
 basepath = os.path.join(os.getcwd(), os.path.dirname(__file__))
 error = False
