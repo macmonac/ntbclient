@@ -5,3 +5,7 @@ all:
 
 clean:
 	find . -name '*.pyc' -delete
+
+test:
+	tests/syntax.sh
+	tests/spec.py

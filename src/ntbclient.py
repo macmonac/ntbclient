@@ -125,6 +125,7 @@ def warning(message, extra=None):
     if verbose and extra:
         print(extra, file=sys.stderr)
 
+
 create_connection_old = socket.create_connection
 
 
@@ -135,6 +136,7 @@ def new_create_connection(address, *args, **kwargs):
     if dnsip:
         h = dnsip
     return create_connection_old((h, p), *args, **kwargs)
+
 
 socket.create_connection = new_create_connection
 
@@ -216,7 +218,7 @@ def gen_rsa_key(private_key, public_key):
         new_public_key = new_rsa_key.publickey().exportKey("PEM")
         try:
             with open(private_key, 'w') as file:
-                os.chmod(private_key, 0600)
+                os.chmod(private_key, 0o600)
                 file.write(new_private_key)
             with open(public_key, 'w') as file:
                 file.write(new_public_key)
@@ -265,20 +267,22 @@ def cache_id(id, cache_id_file):
         warning("Cache_id_file already exist")
 
 
-def get_servers(server_string, random_server, familly):
-    servers = re.split("\s*;\s*|\s*,\s*|\s*", server_string.strip())
+def get_servers(server_string, random_server, familly, error=True):
+    servers = re.findall('[^,;]+', server_string.strip())
     servers_ip = []
     for s in servers:
         server = s
         port = "443"
-        res = re.match("^(.*)([:]([0-9]{1,5}))$", server)
+
+        res = re.match("^([^:]*|[[][0-9a-zA-Z:]{3,}[]])[:]([0-9]+)$", server)
         if res:
-            res2 = re.match("^[[](.*)[]]$", res.group(1))
-            if res2:
-                server = res2.group(1)
-            else:
-                server = res.group(1)
-            port = res.group(3)
+            server = res.group(1)
+            port = res.group(2)
+
+        res2 = re.match("^[[](.*)[]]$", server)
+        if res2:
+            server = res2.group(1)
+
         if is_ipv4_address(server) and ipv4_allowed(familly) or is_ipv6_address(server) and ipv6_allowed(familly):
             servers_ip.append({"host": server, "ip": server, "port": port})
         else:
@@ -291,7 +295,7 @@ def get_servers(server_string, random_server, familly):
                         servers_ip.append({"host": server, "ip": server_address, "port": port})
             except socket.gaierror:
                 warning("Can't resolv IP for %s" % (server), traceback.format_exc())
-    if len(servers_ip) < 1:
+    if len(servers_ip) < 1 and error:
         error("Can't find any server's IP")
     if random_server:
         shuffle(servers_ip)
@@ -347,7 +351,7 @@ def main():
         validator = Validator()
         results = config.validate(validator)
 
-        if not results is True:
+        if results is not True:
             for (section_list, key, _) in flatten_errors(config, results):
                 if key is not None:
                     warning('The key "%s" failed validation' % (key, ', '.join(section_list)))
@@ -370,6 +374,7 @@ def main():
     familly_parser.add_argument('-4', action='store_true', help='IPv4 only')
     familly_parser.add_argument('-6', action='store_true', help='IPv6 only')
     parser.add_argument('--server', '-s', action='store', help='Servers')
+    parser.add_argument('--server-rescue', action='store', help='Rescue servers. Can only deliver the passphrase and not subscribe. Always try in last.', default='')
     random_parser = parser.add_mutually_exclusive_group()
     random_parser.add_argument('--random-server', action='store_true', help='Enable shuffle of server addresses for request')
     random_parser.add_argument('--no-random-server', action='store_true', help='Disable shuffle of server addresses for request')
@@ -429,6 +434,9 @@ def main():
         public_key = get_key(args.public_key)
         subscribe(pool, id, private_key, public_key, servers)
     else:
+        servers_rescue = get_servers(args.server_rescue, False, familly, False)
+        servers.extend(servers_rescue)
+
         private_key = get_key(args.private_key)
         passphrase = get_passphrase(pool, id, private_key, servers, vars(args)['try'], args.interval)
         if args.decode64:

@@ -20,7 +20,7 @@ PYINSTALLER := $(shell which pyinstaller 2> /dev/null)
 build:
 ifdef PYINSTALLER
 		mkdir -p $(BUILDDIR)
-		$(PYINSTALLER) $(CURDIR)/src/ntbclient --onefile --specpath $(BUILDDIR)/ --distpath $(BUILDDIR)/ --workpath $(BUILDDIR)/tmp/ -n ntbclient.static
+		$(PYINSTALLER) $(CURDIR)/src/ntbclient.py --onefile --specpath $(BUILDDIR)/ --distpath $(BUILDDIR)/ --workpath $(BUILDDIR)/tmp/ -n ntbclient.static
 else
 		@echo PyInstaller Not found !
 endif
@@ -28,7 +28,7 @@ endif
 
 override_dh_auto_install:
 	install -d -m 755 $(DESTDIR)/usr/bin
-	install -m 755 $(CURDIR)/src/ntbclient $(DESTDIR)/usr/bin
+	install -m 755 $(CURDIR)/src/ntbclient.py $(DESTDIR)/usr/bin/ntbclient
 ifdef PYINSTALLER
 	install -m 755 $(BUILDDIR)/ntbclient.static $(DESTDIR)/usr/bin
 endif
