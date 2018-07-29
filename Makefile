@@ -9,3 +9,4 @@ clean:
 test:
 	tests/syntax.sh
 	tests/spec.py
+	tests/unit.py
