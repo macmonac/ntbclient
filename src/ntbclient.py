@@ -141,7 +141,7 @@ def new_create_connection(address, *args, **kwargs):
 socket.create_connection = new_create_connection
 
 
-def get_passphrase(pool, id, private_key, servers, ntry, interval):
+def get_passphrase(pool, id, private_key, servers, ntry, interval, timeout_retry):
     global dnsip
     signature = sign(id, private_key)
 
@@ -162,6 +162,7 @@ def get_passphrase(pool, id, private_key, servers, ntry, interval):
         number_try = number_try - 1
         if number_try != 0:
             time.sleep(interval)
+            pool.connection_pool_kw['timeout'] = timeout_retry
     error("Can't get passphrase !")
 
 
@@ -381,6 +382,7 @@ def main():
     parser.add_argument('--try', action='store', help='Number of trying for each servers', type=int)
     parser.add_argument('--interval', action='store', help='ID file', type=int)
     parser.add_argument('--timeout', action='store', help='Timeout', type=int)
+    parser.add_argument('--timeout_retry', action='store', help='Timeout', type=int, default=120)
     proxy_parser = parser.add_mutually_exclusive_group()
     proxy_parser.add_argument('--use-proxy-env', action='store_true', help='Enable http(s)_proxy env proxy var')
     proxy_parser.add_argument('--no-use-proxy-env', action='store_true', help='Disable http(s)_proxy env proxy var')
@@ -423,7 +425,7 @@ def main():
             if not os.path.isfile(ca_certs) or not os.access(ca_certs, os.R_OK):
                 error("Can't find ca cert file : %s" % (ca_certs))
 
-    pool = urllib3.PoolManager(cert_reqs=cert_reqs, ca_certs=ca_certs, timeout=args.timeout)
+    pool = urllib3.PoolManager(cert_reqs=cert_reqs, ca_certs=ca_certs, timeout=args.timeout, retries=urllib3.Retry(0))
 
     random_server = False if args.no_random_server else args.random_server
     servers = get_servers(args.server, random_server, familly)
@@ -438,7 +440,7 @@ def main():
         servers.extend(servers_rescue)
 
         private_key = get_key(args.private_key)
-        passphrase = get_passphrase(pool, id, private_key, servers, vars(args)['try'], args.interval)
+        passphrase = get_passphrase(pool, id, private_key, servers, vars(args)['try'], args.interval, args.timeout_retry)
         if args.decode64:
             args.output.write(b64decode(passphrase))
         else:
