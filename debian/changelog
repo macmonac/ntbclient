@@ -1,3 +1,11 @@
+ntbclient (2.5.0) bionic; urgency=medium
+
+  * [272ecc9a] Add rescue servers option, correction of servers parsing and create some test
+  * [49a225e9] Simple flake9 refactor
+  * [7b96d91b] Launch unit test when generate package
+
+ -- Pierre BLONDEAU <blondeau@n306l-deeper.campus.unicaen.fr.>  Wed, 08 Aug 2018 17:28:32 +0200
+
 ntbclient (2.4.0) xenial; urgency=medium
 
   * [aacbb217] Add README
