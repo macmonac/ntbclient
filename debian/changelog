@@ -1,3 +1,9 @@
+ntbclient (2.6.0) bionic; urgency=medium
+
+  * [c1cbf44b] Add timeout_retry option
+
+ -- Pierre BLONDEAU <blondeau@n306l-deeper.campus.unicaen.fr.>  Thu, 09 Aug 2018 12:31:20 +0200
+
 ntbclient (2.5.0) bionic; urgency=medium
 
   * [272ecc9a] Add rescue servers option, correction of servers parsing and create some test
