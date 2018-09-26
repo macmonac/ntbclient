@@ -24,3 +24,6 @@ USE_TPM=false
 
 KEY_PATH="/boot/key.pem"
 #KEY_PATH="/boot/key.seal"
+
+# NTB initramfs script can clean network configuration before kernel pass the hand to init
+CLEAN_NETWORK=true

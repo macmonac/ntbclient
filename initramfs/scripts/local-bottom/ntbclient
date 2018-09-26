@@ -31,7 +31,28 @@ if ${TPM}
 then
     killall tcsd &>/dev/null
 fi
+
 kill `cat /var/run/ntbclient.pid`
+
 umount /boot
+
+case `echo "${CLEAN_NETWORK}" | cut -c 1` in
+    T|t|Y|y)
+        CLEAN=true;;
+    *)
+        CLEAN=false;;
+esac
+
+if ${CLEAN}
+then
+    # From /usr/share/initramfs-tools/scripts/functions
+    # -> configure_networking()
+    # Ip-Config tries to create this file and when it succeds
+    # creating the file /run/net-"${DEVICE}".conf
+    for DEVICE in ` ls /run/net-*.conf /run/net6-*.conf 2> /dev/null | sed "s@^/run/net-@@ ; s/.conf$//" `
+    do
+        ip addr flush dev "${DEVICE}"
+    done
+fi
 
 log_end_msg
