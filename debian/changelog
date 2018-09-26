@@ -1,3 +1,9 @@
+ntbclient (2.7.0) bionic; urgency=medium
+
+  * [2c427829] Add CLEAN_NETWORK option
+
+ -- Pierre BLONDEAU <blondeau@n306l-deeper.campus.unicaen.fr.>  Wed, 26 Sep 2018 22:31:13 +0200
+
 ntbclient (2.6.0) bionic; urgency=medium
 
   * [c1cbf44b] Add timeout_retry option
