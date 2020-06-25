@@ -1,3 +1,13 @@
+ntbclient (3.0.1) bionic; urgency=medium
+
+  [ Davy Gigan ]
+  * [a2097661] Typo.
+
+  [ Pierre BLONDEAU ]
+  * [92d9625a] Correction des dépendances de build pour le binaire static
+
+ -- Pierre BLONDEAU <blondeau@n306l-deeper.campus.unicaen.fr.>  Thu, 25 Jun 2020 17:59:40 +0200
+
 ntbclient (3.0.0) bionic; urgency=medium
 
   * [e755596b] Passage en python3
