@@ -241,7 +241,7 @@ def id_from_files(id_file, cache_id_file):
 
     if idc:
         if idf and idf != idc:
-            warning("The id_file and the cache_id_file are different. May be something to clean",
+            warning("The id_file and the cache_id_file are different. Maybe something to clean",
                     "(from file) %s != (from cache)%s" % (idf, idc))
         return idc
     if idf:
