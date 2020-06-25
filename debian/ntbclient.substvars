@@ -1,3 +1,2 @@
 misc:Depends=debconf (>= 0.5) | debconf-2.0
-python:Depends=python:any
 misc:Pre-Depends=

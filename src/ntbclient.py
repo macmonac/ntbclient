@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 # Copyright GREYC - UMR 6072 ; Université de Caen Normandie
@@ -188,7 +188,7 @@ def subscribe(pool, id, private_key, public_key, servers):
 def sign(id, rsa_private_key):
     signer = PKCS1_v1_5_Signature.new(rsa_private_key)
     digest = SHA256.new()
-    digest.update(id)
+    digest.update(id.encode("utf-8"))
     sign = signer.sign(digest)
     return b64encode(sign)
 
@@ -206,7 +206,7 @@ def decrypt(encrypted, rsa_private_key):
     sentinel = Random.new().read(15 + dsize)
 
     decrypted = cipher.decrypt(b64decode(encrypted), sentinel)
-    return b64encode(decrypted)
+    return b64encode(decrypted).decode("utf-8")
 
 
 def gen_rsa_key(private_key, public_key):
@@ -215,8 +215,8 @@ def gen_rsa_key(private_key, public_key):
             os.access(os.path.dirname(private_key), os.W_OK) and \
             os.access(os.path.dirname(public_key), os.W_OK):
         new_rsa_key = RSA.generate(4096)
-        new_private_key = new_rsa_key.exportKey("PEM")
-        new_public_key = new_rsa_key.publickey().exportKey("PEM")
+        new_private_key = new_rsa_key.exportKey("PEM").decode("utf-8")
+        new_public_key = new_rsa_key.publickey().exportKey("PEM").decode("utf-8")
         try:
             with open(private_key, 'w') as file:
                 os.chmod(private_key, 0o600)
@@ -275,12 +275,12 @@ def get_servers(server_string, random_server, familly, error=True):
         server = s
         port = "443"
 
-        res = re.match("^([^:]*|[[][0-9a-zA-Z:]{3,}[]])[:]([0-9]+)$", server)
+        res = re.match("^([^:]*|[\[][0-9a-zA-Z:]{3,}[\]])[:]([0-9]+)$", server)
         if res:
             server = res.group(1)
             port = res.group(2)
 
-        res2 = re.match("^[[](.*)[]]$", server)
+        res2 = re.match("^[\[](.*)[\]]$", server)
         if res2:
             server = res2.group(1)
 
@@ -442,7 +442,7 @@ def main():
         private_key = get_key(args.private_key)
         passphrase = get_passphrase(pool, id, private_key, servers, vars(args)['try'], args.interval, args.timeout_retry)
         if args.decode64:
-            args.output.write(b64decode(passphrase))
+            args.output.buffer.write(b64decode(passphrase))
         else:
             args.output.write(passphrase)
     sys.exit(0)

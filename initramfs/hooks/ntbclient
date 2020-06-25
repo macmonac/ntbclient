@@ -55,7 +55,7 @@ if [ "${NTB}" != "n" ]; then
     mkdir -p "${DESTDIR}/lib/ntbclient/"
     copy_exec "${ntbclient_static}" "/lib/ntbclient/ntbclient"
     # Copy dynamic libraries for python # github.com/pyinstaller/pyinstaller/wiki/FAQ Misc 4
-    ldd /usr/bin/python | grep ' => ' | cut -f3 -d" " | while read lib
+    ldd /usr/bin/python3 | grep ' => ' | cut -f3 -d" " | while read lib
     do
         copy_exec ${lib}
     done

@@ -15,7 +15,7 @@ BUILDDIR=$(CURDIR)/debian/build
 PYINSTALLER := $(shell which pyinstaller 2> /dev/null)
 
 %:
-	dh $@ --with python2
+	dh $@ --with python3
 
 build:
 ifdef PYINSTALLER
@@ -48,4 +48,3 @@ clean:
 	rm -rf $(DESTDIR)
 	rm -rf $(BUILDDIR)
 	dh $@
-
