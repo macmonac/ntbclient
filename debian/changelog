@@ -1,3 +1,9 @@
+ntbclient (3.0.0) bionic; urgency=medium
+
+  * [e755596b] Passage en python3
+
+ -- Pierre BLONDEAU <blondeau@n306l-deeper.campus.unicaen.fr.>  Thu, 25 Jun 2020 17:36:24 +0200
+
 ntbclient (2.7.0) bionic; urgency=medium
 
   * [2c427829] Add CLEAN_NETWORK option
