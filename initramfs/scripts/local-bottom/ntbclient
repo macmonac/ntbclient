@@ -26,6 +26,18 @@ case `echo "${USE_TPM}" | cut -c 1` in
     *)
         TPM=false;;
 esac
+REBOOT=false
+case `echo "${REBOOT_AFTER_TIME}" | cut -c 1` in
+    T|t|Y|y)
+        REBOOT=true;;
+    *)
+        REBOOT=false;;
+esac
+
+if ${REBOOT}
+then
+    kill "$(cat /var/run/ntbclient_reboot.pid)"
+fi
 
 if ${TPM}
 then

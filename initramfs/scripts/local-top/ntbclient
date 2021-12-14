@@ -60,6 +60,23 @@ case `echo "${USE_TPM}" | cut -c 1` in
     *)
         TPM=false;;
 esac
+REBOOT=false
+REBOOT_TIME=0
+case `echo "${REBOOT_AFTER_TIME}" | cut -c 1` in
+    T|t|Y|y)
+        if [ "${REBOOT_AFTER_TIME_DELAY}" -eq "${REBOOT_AFTER_TIME_DELAY}" ] 2>/dev/null
+        then
+            if [ "${REBOOT_AFTER_TIME_DELAY}" -gt "0" ] 2>/dev/null
+            then
+                REBOOT=true
+                REBOOT_TIME="${REBOOT_AFTER_TIME_DELAY}"
+            else
+                log_failure_msg "ERROR: REBOOT_AFTER_TIME_DELAY must be greater than 0"
+            fi
+        else
+            log_failure_msg "ERROR: REBOOT_AFTER_TIME_DELAY must be an integer."
+        fi ;;
+esac
 
 mkdir -p /boot
 mount /boot
@@ -77,5 +94,10 @@ else
     ( configure_networking ; wait_for_network ; /lib/ntbclient/ntbclient --private-key "${KEY_PATH}" --decode64 --output "/lib/cryptsetup/passfifo" ) &
 fi
 echo $! > /var/run/ntbclient.pid
+if ${REBOOT}
+then
+    ( sleep "${REBOOT_TIME}" ; reboot -f ) &
+    echo $! > /var/run/ntbclient_reboot.pid
+fi
 
 log_end_msg

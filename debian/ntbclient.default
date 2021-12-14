@@ -27,3 +27,9 @@ KEY_PATH="/boot/key.pem"
 
 # NTB initramfs script can clean network configuration before kernel pass the hand to init
 CLEAN_NETWORK=true
+
+# If case of network failure for exemple, the NTB client can't uncrypt the computer and the computer
+# stay lock on decrypt process. # Reboot the computer after a time gives it new chance to uncrypt
+# the computer
+REBOOT_AFTER_TIME=false
+REBOOT_AFTER_TIME_DELAY=300
