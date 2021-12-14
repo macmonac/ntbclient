@@ -3,7 +3,7 @@ Section: admin
 Priority: optional
 Maintainer: Pierre Blondeau <pierre.blondeau@unicaen.fr>, Davy Gigan <davy.gigan@unicaen.fr>, Gottstein Cyprien <cyprien.gottstein@unicaen.fr>
 Build-Depends: debhelper (>= 8.0.0), python3-flake8, upx-ucl, python3, python3-crypto, python3-argcomplete, python3-configobj, python3-urllib3
-Standards-Version: 3.0.1
+Standards-Version: 3.1.0
 Homepage: https://forge.greyc.fr/projects/network-trusted-boot
 Vcs-Browser: https://forge.greyc.fr/projects/ntbclient/repository
 Vcs-Git: https://forge.greyc.fr/git/ntbclient

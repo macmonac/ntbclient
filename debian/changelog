@@ -1,3 +1,10 @@
+ntbclient (3.1.0) bionic; urgency=medium
+
+  * [78b0bb20] Shellcheck
+  * [7f8471dc] Add Reboot Functionality
+
+ -- Pierre BLONDEAU <blondeau@n306l-deeper.campus.unicaen.fr.>  Tue, 14 Dec 2021 17:24:41 +0100
+
 ntbclient (3.0.1) bionic; urgency=medium
 
   [ Davy Gigan ]
