@@ -97,15 +97,24 @@ import traceback
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, FileType
 from configobj import ConfigObj, flatten_errors
 from validate import Validator
-from Crypto.PublicKey import RSA
-# from Crypto.Cipher import PKCS1_OAEP
-from Crypto.Cipher import PKCS1_v1_5 as PKCS1_v1_5_Cipher
-from Crypto.Signature import PKCS1_v1_5 as PKCS1_v1_5_Signature
-from Crypto.Hash import SHA256
-from Crypto import Random
 from base64 import b64encode, b64decode
 from random import shuffle
 import urllib3
+import importlib
+if importlib.util.find_spec('Cryptodome'):
+    from Cryptodome.PublicKey import RSA
+    # from Cryptodome.Cipher import PKCS1_OAEP
+    from Cryptodome.Cipher import PKCS1_v1_5 as PKCS1_v1_5_Cipher
+    from Cryptodome.Signature import PKCS1_v1_5 as PKCS1_v1_5_Signature
+    from Cryptodome.Hash import SHA256
+    from Cryptodome import Random
+else:
+    from Crypto.PublicKey import RSA
+    # from Crypto.Cipher import PKCS1_OAEP
+    from Crypto.Cipher import PKCS1_v1_5 as PKCS1_v1_5_Cipher
+    from Crypto.Signature import PKCS1_v1_5 as PKCS1_v1_5_Signature
+    from Crypto.Hash import SHA256
+    from Crypto import Random
 
 verbose = False
 dnsip = None
@@ -275,12 +284,12 @@ def get_servers(server_string, random_server, familly, error=True):
         server = s
         port = "443"
 
-        res = re.match("^([^:]*|[\[][0-9a-zA-Z:]{3,}[\]])[:]([0-9]+)$", server)
+        res = re.match(r"^([^:]*|[\[][0-9a-zA-Z:]{3,}[\]])[:]([0-9]+)$", server)
         if res:
             server = res.group(1)
             port = res.group(2)
 
-        res2 = re.match("^[\[](.*)[\]]$", server)
+        res2 = re.match(r"^[\[](.*)[\]]$", server)
         if res2:
             server = res2.group(1)
 
@@ -355,7 +364,7 @@ def main():
         if results is not True:
             for (section_list, key, _) in flatten_errors(config, results):
                 if key is not None:
-                    warning('The key "%s" failed validation' % (key, ', '.join(section_list)))
+                    warning('The key "%s" failed validation : "%s"' % (key, ', '.join(section_list)))
         else:
             defaults = config.dict()
 
