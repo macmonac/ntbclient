@@ -47,7 +47,7 @@ endif
 # https://launchpad.net/ubuntu/+source/dpkg/1.20.9ubuntu2
 # Ubuntu change default compression format in debian packages but we are not yet ready
 override_dh_builddeb:
-        dh_builddeb -- -Zxz
+	dh_builddeb -- -Zxz
 
 clean:
 	rm -rf $(DESTDIR)
