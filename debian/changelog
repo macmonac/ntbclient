@@ -1,3 +1,14 @@
+ntbclient (3.2.0) jammy; urgency=medium
+
+  [ Pierre BLONDEAU ]
+  * [3aa8314e] Add Ubuntu The Jammy Jellyfish support
+  * [b73d7b1f] Silent kill when ntbclient process already stopped
+  * [03f553dd] Correction of package generation with all dependencies and compatibility with old infrastructures
+  * [ea51c757] Add simple generation documentation
+  * [7fa409d6] Ignore build-deps
+
+ -- Pierre BLONDEAU <dsi.support.c2@unicaen.fr>  Thu, 02 Jun 2022 17:47:45 +0200
+
 ntbclient (3.1.0) bionic; urgency=medium
 
   * [78b0bb20] Shellcheck
