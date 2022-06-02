@@ -3,3 +3,4 @@ debian/build/*
 debian/*debhelper*
 debian/files
 *.pyc
+ntbclient-build-deps_*
