@@ -44,7 +44,7 @@ then
     killall tcsd > /dev/null 2>&1
 fi
 
-kill "$(cat /var/run/ntbclient.pid)"
+kill "$(cat /var/run/ntbclient.pid)" 2>&1
 
 umount /boot
 
